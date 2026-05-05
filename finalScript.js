@@ -110,13 +110,20 @@ async function getArrivalInfo(station, stationNum) {
 
     let parsed = await response.json();
 
-    if (parsed.root.station[0].etd[0].estimate[0].minutes > parsed.root.station[0].etd[1].estimate[0].minutes) {
-        nextArrival = parsed.root.station[0].etd[1].destination;
-        nextArrivalTime = parsed.root.station[0].etd[1].estimate[0].minutes;
-    } else {
-        nextArrival = parsed.root.station[0].etd[0].destination;
-        nextArrivalTime = parsed.root.station[0].etd[0].estimate[0].minutes;
+    let destinations = parsed.root.station[0].etd;
+
+    let leastIndex = destinations.length-1;
+
+    console.log(destinations)
+
+    for (let i = 0; i < destinations.length; i++) {
+        if (Number(destinations[i].estimate[0].minutes) < Number(destinations[leastIndex].estimate[0].minutes)) {
+            leastIndex = i
+        }
     }
+
+    nextArrival = destinations[leastIndex].destination;
+    nextArrivalTime = destinations[leastIndex].estimate[0].minutes;
 
     etdElement.textContent = nextArrivalTime + " minutes";
     arrivalElement.textContent = nextArrival;
