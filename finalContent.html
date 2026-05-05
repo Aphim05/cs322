@@ -3,15 +3,14 @@
     <head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>BART live map</title>
-        <script src="finalScript.js" defer></script>
+        <title>BART Live Map</title>
+        <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+        <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
         <link rel="stylesheet" href="finalStyling.css">
     </head>
-    <header>
-        
-    </header>
-    <body>
-        <button id="12th" class="station" >12th St. Oakland City Center</button>
+<body>
+    <div id="map"></div>
+     <button id="12th" class="station" >12th St. Oakland City Center</button>
         <button id="16th" class="station" >16th St. Mission (SF)</button>
         <button id="19th" class="station" >19th St. Oakland</button>
         <button id="24th" class="station" >24th St. Mission (SF)</button>
@@ -61,18 +60,17 @@
         <button id="wcrk" class="station" >Walnut Creek</button>
         <button id="wdub" class="station" >West Dublin</button>
         <button id="woak" class="station" >West Oakland</button>
-
-        
         <div class="popup" id="popup1" hidden>
+            
 
             <p>
-            <section id="name"></section> 
-            <section id="location"></section> <br>
-            Next Departure: <section id="arrival"></section><br>
-            Going To: <section id="goingTo"></section><br>
-            In: <section id="etd"></section><br>
-            Fare: <section id="fare"></section><br>
-        </p>
+                <section id="name"></section> 
+                <section id="location"></section> <br>
+                Next Departure: <section id="arrival"></section><br>
+                Going To: <section id="goingTo"></section><br>
+                In: <section id="etd"></section><br>
+                Fare: <section id="fare"></section><br>
+            </p>
         
         </div>
 
@@ -86,6 +84,7 @@
             </p>
         
         </div>
-
-    </body>
+        <script src="finalScript.js"></script>
+  </div>
+ </body>
 </html>
