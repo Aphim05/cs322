@@ -1,5 +1,5 @@
 
-// Community key (replace with personal key later)
+// Community key for Mapbox
 mapboxgl.accessToken = 'pk.eyJ1IjoiYXA3MCIsImEiOiJjbW9sbzloYzkwanNpMzJuY3R6dmM1YXJqIn0.cV6sTCW9ZRJPtXHX8zpMaw';
 
 const map = new mapboxgl.Map({
@@ -12,7 +12,7 @@ const map = new mapboxgl.Map({
 const bartKey = "MW9S-E7SL-26DU-VV8V";
 
 //using the offical BART data to find the choords for each station, then adding a marker to the map for each station
-const stationchords = {
+const stationCoords = {
      "12th": [-122.2719, 37.8033],
     "16th": [-122.4197, 37.7651],
     "19th": [-122.2688, 37.8080],
@@ -75,32 +75,190 @@ const BARTlines = {
     beige:  "#BCAAA4"
 };
 
-//BART route GEOJSON, basically simplifyd lines for each route, used to draw the lines on the map
+//BART route GEOJSON, basically simplified lines for each route, used to draw the lines on the map
+const bartRoutes = {
+    type: "FeatureCollection",
+    features: [
+        {
+             type: "Feature",
+            properties: { line: "yellow", color: BARTlines.yellow },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    stationCoords["antc"], stationCoords["pctr"], stationCoords["pitt"],
+                    stationCoords["ncon"], stationCoords["conc"], stationCoords["phil"],
+                    stationCoords["wcrk"], stationCoords["lafy"], stationCoords["orin"],
+                    stationCoords["rock"], stationCoords["mcar"], stationCoords["19th"],
+                    stationCoords["12th"], stationCoords["lake"], stationCoords["ftvl"],
+                    stationCoords["cols"], stationCoords["bayf"], stationCoords["sanl"],
+                    stationCoords["hayw"], stationCoords["shay"], stationCoords["ucty"],
+                    stationCoords["warm"], stationCoords["frmt"], stationCoords["mlpt"],
+                    stationCoords["bery"]
+                    ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: { line: "red", color: BARTlines.red },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    stationCoords["rich"], stationCoords["deln"], stationCoords["plza"],
+                    stationCoords["nbrk"], stationCoords["dbrk"], stationCoords["ashb"],
+                    stationCoords["mcar"], stationCoords["19th"], stationCoords["12th"],
+                    stationCoords["woak"], stationCoords["embr"], stationCoords["mont"],
+                    stationCoords["powl"], stationCoords["civc"], stationCoords["16th"],
+                    stationCoords["24th"], stationCoords["glen"], stationCoords["balb"],
+                    stationCoords["daly"], stationCoords["colm"], stationCoords["ssan"],
+                    stationCoords["sbrn"], stationCoords["sfia"], stationCoords["mlbr"]
+                ]
+            }
+        },
+        {
+             type: "Feature",
+            properties: { line: "blue", color: BARTlines.blue },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    stationCoords["dubl"], stationCoords["wdub"], stationCoords["cast"],
+                    stationCoords["bayf"], stationCoords["sanl"], stationCoords["ftvl"],
+                    stationCoords["cols"], stationCoords["lake"], stationCoords["12th"],
+                    stationCoords["19th"], stationCoords["mcar"], stationCoords["ashb"],
+                    stationCoords["dbrk"], stationCoords["nbrk"], stationCoords["woak"],
+                    stationCoords["embr"], stationCoords["mont"], stationCoords["powl"],
+                    stationCoords["civc"], stationCoords["16th"], stationCoords["24th"],
+                    stationCoords["glen"], stationCoords["balb"], stationCoords["daly"]
+                ]
+            }
+        },
+        {
+              type: "Feature",
+            properties: { line: "green", color: BARTlines.green },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    stationCoords["bery"], stationCoords["mlpt"], stationCoords["warm"],
+                    stationCoords["frmt"], stationCoords["ucty"], stationCoords["shay"],
+                    stationCoords["hayw"], stationCoords["sanl"], stationCoords["bayf"],
+                    stationCoords["cols"], stationCoords["ftvl"], stationCoords["lake"],
+                    stationCoords["12th"], stationCoords["19th"], stationCoords["mcar"],
+                    stationCoords["woak"], stationCoords["embr"], stationCoords["mont"],
+                    stationCoords["powl"], stationCoords["civc"], stationCoords["16th"],
+                    stationCoords["24th"], stationCoords["glen"], stationCoords["balb"],
+                    stationCoords["daly"]
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: { line: "orange", color: BARTlines.orange },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    stationCoords["bery"], stationCoords["mlpt"], stationCoords["warm"],
+                    stationCoords["frmt"], stationCoords["ucty"], stationCoords["shay"],
+                    stationCoords["hayw"], stationCoords["sanl"], stationCoords["bayf"],
+                    stationCoords["cols"], stationCoords["ftvl"], stationCoords["lake"],
+                    stationCoords["12th"], stationCoords["19th"], stationCoords["mcar"],
+                    stationCoords["ashb"], stationCoords["dbrk"], stationCoords["nbrk"],
+                    stationCoords["plza"], stationCoords["deln"], stationCoords["rich"]
+                ]
+            }
+        },
+        {
+             type: "Feature",
+            properties: { line: "beige", color: BARTlines.beige },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    stationCoords["oakl"], stationCoords["cols"]
+                ]
+            }
+        }
+
+    ]
+};
+
+let station1 = "";
+let station2 = "";
 
 // Enum for readability in future functions
-const stationNum = {
-    k1: "station1",
-    k2: "station2"
-}
+const stationNum = {k1: "station1", k2: "station2" };
+
 
 // Station 1 elements
 let nameElement = document.getElementById("name");
 let locationElement = document.getElementById("location");
 let arrivalElement = document.getElementById("arrival");
-let goingToElement = document.getElementById("goingto");
+let goingToElement = document.getElementById("goingTo");
 let etdElement = document.getElementById("etd");
 let fareElement = document.getElementById("fare");
+
 
 // Station 2 Elements
 let nameElement2 = document.getElementById("name2");
 let locationElement2 = document.getElementById("location2");
 
-//Overlay element
-const overlay = document.getElementById("overlay");
-
 // Popup elements
 const popup1Element = document.getElementById("popup1");
 const popup2Element = document.getElementById("popup2");
+
+//Station click handling (Or it might be a handler)
+function handleStationClick(stationId) {
+    if (popup1Element.hasAttribute("hidden")) {
+        station1 = stationId;
+        getLocationInfo(station1, stationNum.k1);
+        getArrivalInfo(station1, stationNum.k1);
+        popup1Element.toggleAttribute("hidden");
+
+    } else if (popup2Element.hasAttribute("hidden")){
+        station2 = stationId;
+        if (station1 === station2){
+            station2 = "";
+            hidePopUps();
+        } else {
+            getLocationInfo(station2, stationNum.k2);
+            popup2Element.toggleAttribute("hidden");
+        }
+    } else {
+        hidePopUps();
+    }
+}
+
+// Adding map layers and markers as the map loads
+map.on('load', () => {
+    map.addSource('bart-routes', { type: 'geojson', data: bartRoutes });
+ 
+    map.addLayer({
+        id: 'bart-lines',
+        type: 'line',
+        source: 'bart-routes',
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+        paint: {
+            'line-color': ['get', 'color'],
+            'line-width': [
+                'interpolate', ['linear'], ['zoom'],
+                8, 2,
+                14, 5
+            ],
+            'line-opacity': 0.85
+        }
+    });
+ 
+    // --- Add a station marker for each station ---
+    Object.entries(stationCoords).forEach(([id, coords]) => {
+        // Create a styled marker element
+        const el = document.createElement('div');
+        el.className = 'bart-marker';
+        el.setAttribute('data-id', id);
+ 
+        const marker = new mapboxgl.Marker({ element: el, anchor: 'center' })
+            .setLngLat(coords)
+            .addTo(map);
+ 
+        el.addEventListener('click', () => handleStationClick(id));
+    });
+});
 
 // Current station info (might not be needed, may remove later)
 let sName = "";
@@ -110,104 +268,36 @@ let nextArrivalTime = "";
 let finalArrival = "";
 let cost = "";
 
-// Gets all station buttons...
-const stations = document.getElementsByClassName("station");
-
-for (let i = 0; i < stations.length; i++) {
-
-    // ... and makes them wait for a click
-    stations[i].addEventListener("click", function() {
-
-        // if popup 1 isnt open, then set popup to info of associated station
-        if (popup1Element.hasAttribute("hidden")) {
-            
-            station1 = stations[i].getAttribute("id");
-
-            getLocationInfo(station1, stationNum.k1);
-            getArrivalInfo(station1, stationNum.k1);
-
-            popup1Element.toggleAttribute("hidden");
-        }
-
-        // if popup 1 is open, but popup 2 isn't, then...
-        else if (popup2Element.hasAttribute("hidden")) {
-            
-            station2 = stations[i].getAttribute("id");
-            
-            //...check to see if user clicked on the same button. if so, hide all popups
-            if (station1 == station2) {
-                station2 = ""
-                hidePopUps();
-            
-            // otherwise, set popup2 to info of associated station
-            } else {
-                getLocationInfo(station2, stationNum.k2);
-                // getArrivalInfo(station2, stationNum.k2);
-                popup2Element.toggleAttribute("hidden");
-            }
-            
-        }
-        // if both popups are open, then hide all popups
-        else {
-            hidePopUps();
-        }
-        window.addEventListener("click", event => { 
-        //Check if the click was on the overlay (the background)    
-        if (event.target === overlay) {
-            hidePopUps();
-    }});
- });
-
-}
-
-// Gets basic location info, the station name and the address
-
-async function getLocationInfo(station, stationNum) {
-    let response = await fetch(`https://api.bart.gov/api/stn.aspx?cmd=stninfo&orig=${station}&key=${bartKey}&json=y`);
-
-    let parsed = await response.json();
-
-    sName = parsed.root.stations.station.name;
-
-    address = String(parsed.root.stations.station.city + ", " + parsed.root.stations.station.address);
-
-    //using enum info, writes data to approiate place
-    if (stationNum == "station1") {
-        nameElement.textContent = sName;
-        locationElement.textContent = address;
-    } else {
-        nameElement2.textContent = sName;
-        locationElement2.textContent = address;
-    }
-    
-}
-
-
 // This DESPERATELY needs to be corrected with the proper info
 // Gets the next train departure
 
-async function getArrivalInfo(station, stationNum) {
+async function getLocationInfo(station, stationNum) {
+
     let response = await fetch(`https://api.bart.gov/api/etd.aspx?cmd=etd&orig=${station}&key=${bartKey}&json=y`);
-
     let parsed = await response.json();
+    let sName = parsed.root.stations.station.name;
+    let address = parsed.root.stations.station.city + ", " + parsed.root.stations.station.address;
+    if (stationNumKey === "station1"){
+         nameElement.textContent     = sName;
+        locationElement.textContent = address;
+    } else {
+        nameElement2.textContent     = sName;
+        locationElement2.textContent = address;
+    }
+}
 
+async function getArrivalInfo(station, stationNumKey) {
+    let response = await fetch(`https://api.bart.gov/api/etd.aspx?cmd=etd&orig=${station}&key=${bartKey}&json=y`);
+    let parsed = await response.json();
     let destinations = parsed.root.station[0].etd;
-
-    let leastIndex = destinations.length-1;
-
-    console.log(destinations)
-
+    let leastIndex = destinations.length - 1;
     for (let i = 0; i < destinations.length; i++) {
         if (Number(destinations[i].estimate[0].minutes) < Number(destinations[leastIndex].estimate[0].minutes)) {
-            leastIndex = i
-        }
+            leastIndex = i;
+        } 
+    etdElement.textContent     = destinations[leastIndex].estimate[0].minutes + " minutes";
+    arrivalElement.textContent = destinations[leastIndex].destination;   
     }
-
-    nextArrival = destinations[leastIndex].destination;
-    nextArrivalTime = destinations[leastIndex].estimate[0].minutes;
-
-    etdElement.textContent = nextArrivalTime + " minutes";
-    arrivalElement.textContent = nextArrival;
 }
 
 // Hides both popups with one function call
@@ -215,4 +305,5 @@ function hidePopUps() {
     popup1Element.setAttribute("hidden", true);
     popup2Element.setAttribute("hidden", true);
 }
+
 
