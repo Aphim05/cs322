@@ -13,7 +13,7 @@ const bartKey = "MW9S-E7SL-26DU-VV8V";
 
 //using the offical BART data to find the choords for each station, then adding a marker to the map for each station
 const stationCoords = {
-     "12th": [-122.2719, 37.8033],
+    "12th": [-122.2719, 37.8033],
     "16th": [-122.4197, 37.7651],
     "19th": [-122.2688, 37.8080],
     "24th": [-122.4183, 37.7524],
@@ -190,14 +190,18 @@ const stationNum = {k1: "station1", k2: "station2" };
 let nameElement = document.getElementById("name");
 let locationElement = document.getElementById("location");
 let arrivalElement = document.getElementById("arrival");
-let goingToElement = document.getElementById("goingTo");
 let etdElement = document.getElementById("etd");
-let fareElement = document.getElementById("fare");
 
 
 // Station 2 Elements
 let nameElement2 = document.getElementById("name2");
 let locationElement2 = document.getElementById("location2");
+
+// Fare elements
+let standardFareElement = document.getElementById("clipper");
+let seniorFareElement = document.getElementById("rtcclipper");
+let studentFareElement = document.getElementById("student");
+let affordableFareElement = document.getElementById("start");
 
 // Popup elements
 const popup1Element = document.getElementById("popup1");
@@ -218,6 +222,7 @@ function handleStationClick(stationId) {
             hidePopUps();
         } else {
             getLocationInfo(station2, stationNum.k2);
+            getFare(station1, station2);
             popup2Element.toggleAttribute("hidden");
         }
     } else {
@@ -268,17 +273,17 @@ let nextArrivalTime = "";
 let finalArrival = "";
 let cost = "";
 
-// This DESPERATELY needs to be corrected with the proper info
 // Gets the next train departure
 
 async function getLocationInfo(station, stationNum) {
 
-    let response = await fetch(`https://api.bart.gov/api/etd.aspx?cmd=etd&orig=${station}&key=${bartKey}&json=y`);
+    let response = await fetch(`https://api.bart.gov/api/stn.aspx?cmd=stninfo&orig=${station}&key=${bartKey}&json=y`);
     let parsed = await response.json();
     let sName = parsed.root.stations.station.name;
     let address = parsed.root.stations.station.city + ", " + parsed.root.stations.station.address;
-    if (stationNumKey === "station1"){
-         nameElement.textContent     = sName;
+    
+    if (stationNum == "station1"){
+        nameElement.textContent     = sName;
         locationElement.textContent = address;
     } else {
         nameElement2.textContent     = sName;
@@ -286,19 +291,58 @@ async function getLocationInfo(station, stationNum) {
     }
 }
 
-async function getArrivalInfo(station, stationNumKey) {
+async function getArrivalInfo(station) {
     let response = await fetch(`https://api.bart.gov/api/etd.aspx?cmd=etd&orig=${station}&key=${bartKey}&json=y`);
     let parsed = await response.json();
     let destinations = parsed.root.station[0].etd;
+    
+    // TODO: Seems to not work for certain "endpoint" stations?
+
     let leastIndex = destinations.length - 1;
     for (let i = 0; i < destinations.length; i++) {
         if (Number(destinations[i].estimate[0].minutes) < Number(destinations[leastIndex].estimate[0].minutes)) {
             leastIndex = i;
         } 
-    etdElement.textContent     = destinations[leastIndex].estimate[0].minutes + " minutes";
-    arrivalElement.textContent = destinations[leastIndex].destination;   
+
+        if (destinations[leastIndex].estimate[0].minutes == "Leaving") {
+            etdElement.textContent = "Now"
+        } else {
+            etdElement.textContent     = destinations[leastIndex].estimate[0].minutes + " minutes";
+        }
+
+        arrivalElement.textContent = destinations[leastIndex].destination;   
     }
 }
+
+async function getFare(station1ID, station2ID) {
+    let response = await fetch(`https://api.bart.gov/api/sched.aspx?cmd=fare&orig=${station1ID}&dest=${station2ID}&date=today&key=${bartKey}&json=y`);
+    let parsed = await response.json();
+    
+    let fares = parsed.root.fares.fare;
+
+    let fareElements = document.getElementsByClassName("fare");
+
+    for (i = 0; i < fareElements.length; i++) {fareElements[i].textContent = "Loading..."}
+
+    for (i = 0; i < fareElements.length; i++) {
+
+        for (y = 0; y < fares.length; y++) {
+
+            if (fareElements[i].getAttribute("id") == fares[y]["@class"]) {
+                fareElements[i].textContent = "$" + fares[y]["@amount"];
+                break;
+            }
+
+        }
+
+        if (fareElements[i].textContent == "Loading...") {
+            fareElements[i].textContent = "N/A"
+        }
+
+    }
+
+}
+
 
 // Hides both popups with one function call
 function hidePopUps() {
