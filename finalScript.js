@@ -185,7 +185,6 @@ let station2 = "";
 // Enum for readability in future functions
 const stationNum = {k1: "station1", k2: "station2" };
 
-
 // Station 1 elements
 let nameElement = document.getElementById("name");
 let locationElement = document.getElementById("location");
@@ -223,6 +222,7 @@ function handleStationClick(stationId) {
         } else {
             getLocationInfo(station2, stationNum.k2);
             getFare(station1, station2);
+            getRoute(station1, station2);
             popup2Element.toggleAttribute("hidden");
         }
     } else {
@@ -343,6 +343,18 @@ async function getFare(station1ID, station2ID) {
 
 }
 
+async function getRoute(station1ID, station2ID) {
+    let response = await fetch(`https://api.bart.gov/api/sched.aspx?cmd=depart&orig=${station1ID}&dest=${station2ID}&date=now&key=${bartKey}&b=0&a=1&l=0&json=y`);
+    let parsed = await response.json();
+    
+    let sTrip = parsed.root.schedule.request.trip;
+
+    console.log(sTrip);
+
+    arrivalElement.textContent = sTrip["@destination"];
+    etdElement.textContent = sTrip["@origTimeMin"];
+    
+}
 
 // Hides both popups with one function call
 function hidePopUps() {
