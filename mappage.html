@@ -8,7 +8,7 @@
         <title>BART Live Map</title>
         <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
         <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
-        <link rel="stylesheet" href="mapstyling.css">
+        <link rel="stylesheet" href="finalStyling.css">
     </head>
     <body>
         <div id="map"></div>
@@ -17,22 +17,26 @@
             <p>
         
                 <section id="name"></section> 
-                <section id="location"></section> <br>
-                Next Departure: <section id="arrival"></section><br>
-                Going To: <section id="goingTo"></section><br>
-                In: <section id="etd"></section><br>
-                Fare: <section id="fare"></section><br>
+                <section id="location"></section>
+                Departure for: <section id="arrival"></section><br>
+                Time leaving: <section id="etd"></section><br>
             </p>
         
         </div>
 
-        <!-- Below is the 2nd popup for determining routes, create later-->>
+        <!-- 2nd popup determines fares from 1st station to 2nd station-->
 
         <div class="popup" id="popup2" hidden>
 
             <p>
-                For now, this is just a placeholder. Here is station 2: <section id="name2"></section> 
-                <section id="location2"></section> <br>
+                <section id="name2"></section> 
+                <section id="location2"></section>
+                
+                Standard Clipper fare: <section class="fare" id="clipper"></section><br>
+                Senior/Disabled fare: <section class="fare" id="rtcclipper"></section><br>
+                Student fare: <section class="fare" id="student"></section><br>
+                Clipper START fare: <section class="fare" id="start"></section><br>
+
             </p>
         
         </div>
