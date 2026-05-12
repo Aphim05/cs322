@@ -179,6 +179,7 @@ const bartRoutes = {
     ]
 };
 
+// Current stations
 let station1 = "";
 let station2 = "";
 
@@ -191,7 +192,6 @@ let locationElement = document.getElementById("location");
 let arrivalElement = document.getElementById("arrival");
 let etdElement = document.getElementById("etd");
 
-
 // Station 2 Elements
 let nameElement2 = document.getElementById("name2");
 let locationElement2 = document.getElementById("location2");
@@ -201,6 +201,9 @@ let standardFareElement = document.getElementById("clipper");
 let seniorFareElement = document.getElementById("rtcclipper");
 let studentFareElement = document.getElementById("student");
 let affordableFareElement = document.getElementById("start");
+
+// Transfer elements
+let transferElement = document.getElementById("transfers")
 
 // Popup elements
 const popup1Element = document.getElementById("popup1");
@@ -213,6 +216,7 @@ function handleStationClick(stationId) {
         getLocationInfo(station1, stationNum.k1);
         getArrivalInfo(station1, stationNum.k1);
         popup1Element.toggleAttribute("hidden");
+        hideandClearTransfers();
 
     } else if (popup2Element.hasAttribute("hidden")){
         station2 = stationId;
@@ -227,6 +231,7 @@ function handleStationClick(stationId) {
         }
     } else {
         hidePopUps();
+        hideandClearTransfers();
     }
 }
 
@@ -351,9 +356,32 @@ async function getRoute(station1ID, station2ID) {
 
     console.log(sTrip);
 
-    arrivalElement.textContent = sTrip["@destination"];
-    etdElement.textContent = sTrip["@origTimeMin"];
-    
+    if (Array.isArray(sTrip)) {
+        arrivalElement.textContent = sTrip[sTrip.length-1]["@destination"];
+        etdElement.textContent = sTrip[sTrip.length-1]["@origTimeMin"];
+        transferElement.textContent += getTransfers(sTrip[sTrip.length-1]);
+    } else {
+        arrivalElement.textContent = sTrip["@destination"];
+        etdElement.textContent = sTrip["@origTimeMin"];
+        transferElement.textContent += getTransfers(sTrip);
+    }
+
+}
+
+function getTransfers(sTrip) {
+    result = "";
+
+    if (sTrip.leg.length > 1) {
+        result = "Transfers: " + sTrip.leg[0]["@origin"]
+
+        for (i = 0; i < sTrip.leg.length; i++) {
+            result += " > " + sTrip.leg[i]["@destination"]
+        }
+
+        transferElement.setAttribute("hidden", false);
+    }
+
+    return result
 }
 
 // Hides both popups with one function call
@@ -362,4 +390,15 @@ function hidePopUps() {
     popup2Element.setAttribute("hidden", true);
 }
 
+function hideandClearTransfers() {
+    transferElement.textContent = ""
+    transferElement.setAttribute("hidden", true);
+}
 
+// currently not used
+
+async function getName(stationID) {
+    let response = await fetch(`https://api.bart.gov/api/stn.aspx?cmd=stninfo&orig=${stationID}&key=${bartKey}&json=y`);
+    let parsed = await response.json();
+    return parsed.root.stations.station.name;
+}
