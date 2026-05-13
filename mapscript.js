@@ -76,6 +76,14 @@ const BARTlines = {
 };
 
 //BART route GEOJSON, basically simplified lines for each route, used to draw the lines on the map
+
+//TODO: fix coordinates
+
+// stationCoords["lake"], stationCoords["ftvl"],
+                    // stationCoords["cols"], stationCoords["bayf"], stationCoords["sanl"],
+                    // stationCoords["hayw"], stationCoords["shay"], stationCoords["ucty"],
+                    // stationCoords["warm"], stationCoords["frmt"], stationCoords["mlpt"],
+                    // stationCoords["bery"]
 const bartRoutes = {
     type: "FeatureCollection",
     features: [
@@ -89,11 +97,11 @@ const bartRoutes = {
                     stationCoords["ncon"], stationCoords["conc"], stationCoords["phil"],
                     stationCoords["wcrk"], stationCoords["lafy"], stationCoords["orin"],
                     stationCoords["rock"], stationCoords["mcar"], stationCoords["19th"],
-                    stationCoords["12th"], stationCoords["lake"], stationCoords["ftvl"],
-                    stationCoords["cols"], stationCoords["bayf"], stationCoords["sanl"],
-                    stationCoords["hayw"], stationCoords["shay"], stationCoords["ucty"],
-                    stationCoords["warm"], stationCoords["frmt"], stationCoords["mlpt"],
-                    stationCoords["bery"]
+                    stationCoords["12th"], stationCoords["woak"], stationCoords["embr"], 
+                    stationCoords["mont"], stationCoords["powl"], stationCoords["civc"], 
+                    stationCoords["16th"], stationCoords["24th"], stationCoords["glen"], 
+                    stationCoords["balb"], stationCoords["daly"], stationCoords["colm"], 
+                    stationCoords["ssan"], stationCoords["sbrn"], stationCoords["sfia"]
                     ]
             }
         },
@@ -121,10 +129,8 @@ const bartRoutes = {
                 type: "LineString",
                 coordinates: [
                     stationCoords["dubl"], stationCoords["wdub"], stationCoords["cast"],
-                    stationCoords["bayf"], stationCoords["sanl"], stationCoords["ftvl"],
-                    stationCoords["cols"], stationCoords["lake"], stationCoords["12th"],
-                    stationCoords["19th"], stationCoords["mcar"], stationCoords["ashb"],
-                    stationCoords["dbrk"], stationCoords["nbrk"], stationCoords["woak"],
+                    stationCoords["bayf"], stationCoords["sanl"], stationCoords["cols"], 
+                    stationCoords["ftvl"], stationCoords["lake"], stationCoords["woak"],
                     stationCoords["embr"], stationCoords["mont"], stationCoords["powl"],
                     stationCoords["civc"], stationCoords["16th"], stationCoords["24th"],
                     stationCoords["glen"], stationCoords["balb"], stationCoords["daly"]
@@ -141,7 +147,6 @@ const bartRoutes = {
                     stationCoords["frmt"], stationCoords["ucty"], stationCoords["shay"],
                     stationCoords["hayw"], stationCoords["sanl"], stationCoords["bayf"],
                     stationCoords["cols"], stationCoords["ftvl"], stationCoords["lake"],
-                    stationCoords["12th"], stationCoords["19th"], stationCoords["mcar"],
                     stationCoords["woak"], stationCoords["embr"], stationCoords["mont"],
                     stationCoords["powl"], stationCoords["civc"], stationCoords["16th"],
                     stationCoords["24th"], stationCoords["glen"], stationCoords["balb"],
