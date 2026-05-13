@@ -9,6 +9,7 @@ const map = new mapboxgl.Map({
     zoom: 10
 });
 
+// Community key for BART API
 const bartKey = "MW9S-E7SL-26DU-VV8V";
 
 //using the offical BART data to find the choords for each station, then adding a marker to the map for each station
@@ -65,6 +66,7 @@ const stationCoords = {
     "woak": [-122.2946, 37.8046]
 };
 
+// Object for station names so that we don't have to fetch them
 const stationNames = {
     "12th" : "12th St. Oakland City Center",
     "16th" : "16th St. Mission (SF)",
@@ -118,7 +120,7 @@ const stationNames = {
     "woak" : "West Oakland"
 }
 
-//Bart line colors
+// Bart line colors
 const BARTlines = {
     yellow: "#FFD800",
     red:    "#E53935",
@@ -135,7 +137,7 @@ const bartRoutes = {
     features: [
         {
              type: "Feature",
-            properties: { line: "yellow", color: BARTlines.yellow, "basewidth": 8 },
+            properties: { line: "yellow", color: BARTlines.yellow, "basewidth": 14 },
             geometry: {
                 type: "LineString",
                 coordinates: [
@@ -153,7 +155,7 @@ const bartRoutes = {
         },
         {
             type: "Feature",
-            properties: { line: "red", color: BARTlines.red, "basewidth": 14 },
+            properties: { line: "red", color: BARTlines.red, "basewidth": 12 },
             geometry: {
                 type: "LineString",
                 coordinates: [
@@ -170,7 +172,7 @@ const bartRoutes = {
         },
         {
              type: "Feature",
-            properties: { line: "blue", color: BARTlines.blue, "basewidth": 10 },
+            properties: { line: "blue", color: BARTlines.blue, "basewidth": 12 },
             geometry: {
                 type: "LineString",
                 coordinates: [
@@ -242,6 +244,7 @@ let nameElement = document.getElementById("name");
 let locationElement = document.getElementById("location");
 let arrivalElement = document.getElementById("arrival");
 let etdElement = document.getElementById("etd");
+let etaElement = document.getElementById("eta");
 
 // Station 2 Elements
 let nameElement2 = document.getElementById("name2");
@@ -260,14 +263,18 @@ let transferElement = document.getElementById("transfers")
 const popup1Element = document.getElementById("popup1");
 const popup2Element = document.getElementById("popup2");
 
-//Station click handling (Or it might be a handler)
+// Station click handling (Or it might be a handler)
 function handleStationClick(stationId) {
+
+    // enable when no popup is active
     if (popup1Element.hasAttribute("hidden")) {
+
         station1 = stationId;
         getLocationInfo(station1, stationNum.k1);
         getArrivalInfo(station1, stationNum.k1);
         popup1Element.toggleAttribute("hidden");
         hideandClearTransfers();
+        hideArrivalTime();
 
     } else if (popup2Element.hasAttribute("hidden")){
         station2 = stationId;
@@ -283,6 +290,7 @@ function handleStationClick(stationId) {
     } else {
         hidePopUps();
         hideandClearTransfers();
+        hideArrivalTime();
     }
 }
 
@@ -312,7 +320,7 @@ map.on('load', () => {
         const el = document.createElement('div');
         el.className = 'bart-marker';
         el.setAttribute('data-id', id);
-        el.style.padding = '10px'; // Expands clickable area by 20px
+        el.style.padding = '7px'; // Expands clickable area
  
         const marker = new mapboxgl.Marker({ element: el, anchor: 'center' })
             .setLngLat(coords)
@@ -352,8 +360,6 @@ async function getArrivalInfo(station) {
     let response = await fetch(`https://api.bart.gov/api/etd.aspx?cmd=etd&orig=${station}&key=${bartKey}&json=y`);
     let parsed = await response.json();
     let destinations = parsed.root.station[0].etd;
-    
-    // TODO: Seems to not work for certain "endpoint" stations?
 
     let leastIndex = destinations.length - 1;
     for (let i = 0; i < destinations.length; i++) {
@@ -406,15 +412,15 @@ async function getRoute(station1ID, station2ID) {
     
     let sTrip = parsed.root.schedule.request.trip;
 
-    console.log(sTrip);
-
     if (Array.isArray(sTrip)) {
         arrivalElement.textContent = stationNames[sTrip[sTrip.length-1]["@destination"].toLowerCase()];
         etdElement.textContent = sTrip[sTrip.length-1]["@origTimeMin"];
+        etaElement.textContent = "Time arriving: " + sTrip[sTrip.length-1]["@destTimeMin"];
         transferElement.textContent += getTransfers(sTrip[sTrip.length-1]);
     } else {
         arrivalElement.textContent = stationNames[sTrip["@destination"].toLowerCase()];
         etdElement.textContent = sTrip["@origTimeMin"];
+        etaElement.textContent = "Time arriving: " + sTrip["@destTimeMin"]
         transferElement.textContent += getTransfers(sTrip);
     }
 
@@ -444,5 +450,8 @@ function hidePopUps() {
 
 function hideandClearTransfers() {
     transferElement.textContent = ""
-    transferElement.setAttribute("hidden", true);
+}
+
+function hideArrivalTime() {
+    etaElement.textContent = ""
 }
