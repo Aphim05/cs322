@@ -65,6 +65,59 @@ const stationCoords = {
     "woak": [-122.2946, 37.8046]
 };
 
+const stationNames = {
+    "12th" : "12th St. Oakland City Center",
+    "16th" : "16th St. Mission (SF)",
+    "19th" : "19th St. Oakland",
+    "24th" : "24th St. Mission (SF)",
+    "ashb" : "Ashby (Berkeley)",
+    "antc" : "Antioch",
+    "balb" : "Balboa Park (SF)",
+    "bayf" : "Bay Fair (San Leandro)",
+    "bery" : "Berryessa / North San Jose",
+    "cast" : "Castro Valley",
+    "civc" : "Civic Center (SF)",
+    "cols" : "Coliseum",
+    "colm" : "Colma",
+    "conc" : "Concord",
+    "daly" : "Daly City",
+    "dbrk" : "Downtown Berkeley",
+    "dubl" : "Dublin/Pleasanton",
+    "deln" : "El Cerrito del Norte",
+    "plza" : "El Cerrito Plaza",
+    "embr" : "Embarcadero (SF)",
+    "frmt" : "Fremont",
+    "ftvl" : "Fruitvale (Oakland)",
+    "glen" : "Glen Park (SF)",
+    "hayw" : "Hayward",
+    "lafy" : "Lafayette",
+    "lake" : "Lake Merritt (Oakland)",
+    "mcar" : "MacArthur (Oakland)",
+    "mlbr" : "Millbrae",
+    "mlpt" : "Milpitas",
+    "mont" : "Montgomery St. (SF)",
+    "nbrk" : "North Berkeley",
+    "ncon" : "North Concord/Martinez",
+    "oakl" : "Oakland Int'l Airport",
+    "orin" : "Orinda",
+    "pitt" : "Pittsburg/Bay Point",
+    "pctr" : "Pittsburg Center",
+    "phil" : "Pleasant Hill",
+    "powl" : "Powell St. (SF)",
+    "rich" : "Richmond",
+    "rock" : "Rockridge (Oakland)",
+    "sbrn" : "San Bruno",
+    "sfia" : "San Francisco Int'l Airport",
+    "sanl" : "San Leandro",
+    "shay" : "South Hayward",
+    "ssan" : "South San Francisco",
+    "ucty" : "Union City",
+    "warm" : "Warm Springs/South Fremont",
+    "wcrk" : "Walnut Creek",
+    "wdub" : "West Dublin",
+    "woak" : "West Oakland"
+}
+
 //Bart line colors
 const BARTlines = {
     yellow: "#FFD800",
@@ -76,7 +129,6 @@ const BARTlines = {
 };
 
 //BART route GEOJSON, basically simplified lines for each route, used to draw the lines on the map
-
 
 const bartRoutes = {
     type: "FeatureCollection",
@@ -284,7 +336,7 @@ async function getLocationInfo(station, stationNum) {
 
     let response = await fetch(`https://api.bart.gov/api/stn.aspx?cmd=stninfo&orig=${station}&key=${bartKey}&json=y`);
     let parsed = await response.json();
-    let sName = parsed.root.stations.station.name;
+    let sName = stationNames[station]
     let address = parsed.root.stations.station.city + ", " + parsed.root.stations.station.address;
     
     if (stationNum == "station1"){
@@ -312,7 +364,7 @@ async function getArrivalInfo(station) {
         if (destinations[leastIndex].estimate[0].minutes == "Leaving") {
             etdElement.textContent = "Now"
         } else {
-            etdElement.textContent     = destinations[leastIndex].estimate[0].minutes + " minutes";
+            etdElement.textContent = destinations[leastIndex].estimate[0].minutes + " minutes";
         }
 
         arrivalElement.textContent = destinations[leastIndex].destination;   
@@ -357,11 +409,11 @@ async function getRoute(station1ID, station2ID) {
     console.log(sTrip);
 
     if (Array.isArray(sTrip)) {
-        arrivalElement.textContent = sTrip[sTrip.length-1]["@destination"];
+        arrivalElement.textContent = stationNames[sTrip[sTrip.length-1]["@destination"].toLowerCase()];
         etdElement.textContent = sTrip[sTrip.length-1]["@origTimeMin"];
         transferElement.textContent += getTransfers(sTrip[sTrip.length-1]);
     } else {
-        arrivalElement.textContent = sTrip["@destination"];
+        arrivalElement.textContent = stationNames[sTrip["@destination"].toLowerCase()];
         etdElement.textContent = sTrip["@origTimeMin"];
         transferElement.textContent += getTransfers(sTrip);
     }
@@ -372,10 +424,10 @@ function getTransfers(sTrip) {
     result = "";
 
     if (sTrip.leg.length > 1) {
-        result = "Transfers: " + sTrip.leg[0]["@origin"]
+        result = "Transfers: " + stationNames[sTrip.leg[0]["@origin"].toLowerCase()]
 
         for (i = 0; i < sTrip.leg.length; i++) {
-            result += " > " + sTrip.leg[i]["@destination"]
+            result += " > " + stationNames[sTrip.leg[i]["@destination"].toLowerCase()]
         }
 
         transferElement.setAttribute("hidden", false);
@@ -393,12 +445,4 @@ function hidePopUps() {
 function hideandClearTransfers() {
     transferElement.textContent = ""
     transferElement.setAttribute("hidden", true);
-}
-
-// currently not used
-
-async function getName(stationID) {
-    let response = await fetch(`https://api.bart.gov/api/stn.aspx?cmd=stninfo&orig=${stationID}&key=${bartKey}&json=y`);
-    let parsed = await response.json();
-    return parsed.root.stations.station.name;
 }
