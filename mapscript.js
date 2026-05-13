@@ -145,7 +145,7 @@ const bartRoutes = {
                 coordinates: [
                     stationCoords["bery"], stationCoords["mlpt"], stationCoords["warm"],
                     stationCoords["frmt"], stationCoords["ucty"], stationCoords["shay"],
-                    stationCoords["hayw"], stationCoords["sanl"], stationCoords["bayf"],
+                    stationCoords["hayw"], stationCoords["bayf"], stationCoords["sanl"],
                     stationCoords["cols"], stationCoords["ftvl"], stationCoords["lake"],
                     stationCoords["woak"], stationCoords["embr"], stationCoords["mont"],
                     stationCoords["powl"], stationCoords["civc"], stationCoords["16th"],
@@ -162,7 +162,7 @@ const bartRoutes = {
                 coordinates: [
                     stationCoords["bery"], stationCoords["mlpt"], stationCoords["warm"],
                     stationCoords["frmt"], stationCoords["ucty"], stationCoords["shay"],
-                    stationCoords["hayw"], stationCoords["sanl"], stationCoords["bayf"],
+                    stationCoords["hayw"], stationCoords["bayf"], stationCoords["sanl"],
                     stationCoords["cols"], stationCoords["ftvl"], stationCoords["lake"],
                     stationCoords["12th"], stationCoords["19th"], stationCoords["mcar"],
                     stationCoords["ashb"], stationCoords["dbrk"], stationCoords["nbrk"],
