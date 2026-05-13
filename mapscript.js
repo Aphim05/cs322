@@ -77,19 +77,13 @@ const BARTlines = {
 
 //BART route GEOJSON, basically simplified lines for each route, used to draw the lines on the map
 
-//TODO: fix coordinates
 
-// stationCoords["lake"], stationCoords["ftvl"],
-                    // stationCoords["cols"], stationCoords["bayf"], stationCoords["sanl"],
-                    // stationCoords["hayw"], stationCoords["shay"], stationCoords["ucty"],
-                    // stationCoords["warm"], stationCoords["frmt"], stationCoords["mlpt"],
-                    // stationCoords["bery"]
 const bartRoutes = {
     type: "FeatureCollection",
     features: [
         {
              type: "Feature",
-            properties: { line: "yellow", color: BARTlines.yellow },
+            properties: { line: "yellow", color: BARTlines.yellow, "basewidth": 8 },
             geometry: {
                 type: "LineString",
                 coordinates: [
@@ -107,7 +101,7 @@ const bartRoutes = {
         },
         {
             type: "Feature",
-            properties: { line: "red", color: BARTlines.red },
+            properties: { line: "red", color: BARTlines.red, "basewidth": 14 },
             geometry: {
                 type: "LineString",
                 coordinates: [
@@ -124,7 +118,7 @@ const bartRoutes = {
         },
         {
              type: "Feature",
-            properties: { line: "blue", color: BARTlines.blue },
+            properties: { line: "blue", color: BARTlines.blue, "basewidth": 10 },
             geometry: {
                 type: "LineString",
                 coordinates: [
@@ -139,7 +133,7 @@ const bartRoutes = {
         },
         {
               type: "Feature",
-            properties: { line: "green", color: BARTlines.green },
+            properties: { line: "green", color: BARTlines.green, "basewidth": 14 },
             geometry: {
                 type: "LineString",
                 coordinates: [
@@ -156,7 +150,7 @@ const bartRoutes = {
         },
         {
             type: "Feature",
-            properties: { line: "orange", color: BARTlines.orange },
+            properties: { line: "orange", color: BARTlines.orange, "basewidth": 18 },
             geometry: {
                 type: "LineString",
                 coordinates: [
@@ -172,7 +166,7 @@ const bartRoutes = {
         },
         {
              type: "Feature",
-            properties: { line: "beige", color: BARTlines.beige },
+            properties: { line: "beige", color: BARTlines.beige, "basewidth": 8 },
             geometry: {
                 type: "LineString",
                 coordinates: [
@@ -253,10 +247,10 @@ map.on('load', () => {
             'line-color': ['get', 'color'],
             'line-width': [
                 'interpolate', ['linear'], ['zoom'],
-                8, 2,
-                14, 5
+                8, ["*", ["get", "basewidth"], 0.5],
+                14, ["get", "basewidth"]
             ],
-            'line-opacity': 0.85
+            'line-opacity': 0.75
         }
     });
  
@@ -266,6 +260,7 @@ map.on('load', () => {
         const el = document.createElement('div');
         el.className = 'bart-marker';
         el.setAttribute('data-id', id);
+        el.style.padding = '10px'; // Expands clickable area by 20px
  
         const marker = new mapboxgl.Marker({ element: el, anchor: 'center' })
             .setLngLat(coords)
